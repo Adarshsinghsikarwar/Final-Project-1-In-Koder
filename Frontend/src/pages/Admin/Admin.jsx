@@ -68,7 +68,7 @@ export default function Admin() {
           flexDirection: "column",
         }}
       >
-        <Navbar />
+        {/* <Navbar /> */}
         <main
           style={{
             flex: 1,
