@@ -39,7 +39,7 @@ const ScoreCard = ({ overallScore = 78 }) => {
           marginBottom: "1rem",
         }}
       >
-        <svg width={110} height={110} viewBox="0 0 110 110">
+        <svg width={130} height={130} viewBox="0 0 110 110">
           <defs>
             <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#7c3aed" />

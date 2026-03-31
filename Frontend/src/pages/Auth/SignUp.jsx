@@ -1,18 +1,30 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ROLES } from "../../utils/auth";
+import authService from "../../services/authService";
 
-const ROLES = ["Candidate", "Interviewer", "HR / Admin"];
 const STRENGTHS = [
-  { label: "Weak", width: "20%", color: "#ef4444" },
-  { label: "Fair", width: "45%", color: "#f59e0b" },
-  { label: "Good", width: "70%", color: "#06b6d4" },
+  { label: "Weak", width: "25%", color: "#ef4444" },
+  { label: "Fair", width: "50%", color: "#f59e0b" },
+  { label: "Good", width: "75%", color: "#3b82f6" },
   { label: "Strong", width: "100%", color: "#10b981" },
 ];
 
 export default function SignUp() {
   const navigate = useNavigate();
-  const [role, setRole] = useState("Candidate");
+  const [role, setRole] = useState(ROLES.CANDIDATE.toLowerCase()); // Backend expects lowercase
   const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleInputChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
   const strength =
     password.length === 0
@@ -119,18 +131,19 @@ export default function SignUp() {
               I am a
             </label>
             <div style={{ display: "flex", gap: "0.5rem" }}>
-              {ROLES.map((r) => (
+              {Object.entries(ROLES).map(([key, r]) => (
                 <button
                   key={r}
-                  onClick={() => setRole(r)}
+                  type="button"
+                  onClick={() => setRole(r.toLowerCase())}
                   style={{
                     flex: 1,
                     padding: "0.5rem",
                     borderRadius: "0.5rem",
-                    border: `1px solid ${role === r ? "#7c3aed" : "rgba(255,255,255,0.1)"}`,
+                    border: `1px solid ${role === r.toLowerCase() ? "#7c3aed" : "rgba(255,255,255,0.1)"}`,
                     background:
-                      role === r ? "rgba(124,58,237,0.18)" : "transparent",
-                    color: role === r ? "#fff" : "rgba(255,255,255,0.45)",
+                      role === r.toLowerCase() ? "rgba(124,58,237,0.18)" : "transparent",
+                    color: role === r.toLowerCase() ? "#fff" : "rgba(255,255,255,0.45)",
                     fontSize: "0.78rem",
                     fontWeight: 600,
                     cursor: "pointer",
@@ -144,9 +157,25 @@ export default function SignUp() {
           </div>
 
           <form
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
-              navigate("/dashboard");
+              setError("");
+              setLoading(true);
+              try {
+                const userData = {
+                  name: `${formData.firstName} ${formData.lastName}`.trim(),
+                  email: formData.email,
+                  password,
+                  role: role,
+                };
+                const res = await authService.register(userData);
+                const redirectPath = res.user.role === "candidate" ? "/candidate/home" : "/dashboard";
+                navigate(redirectPath);
+              } catch (err) {
+                setError(err.response?.data?.message || "Registration failed. Try again.");
+              } finally {
+                setLoading(false);
+              }
             }}
             style={{
               display: "flex",
@@ -154,6 +183,11 @@ export default function SignUp() {
               gap: "0.875rem",
             }}
           >
+            {error && (
+              <div style={{ color: "#ef4444", fontSize: "0.8rem", textAlign: "center", background: "rgba(239,68,68,0.1)", padding: "0.5rem", borderRadius: "0.5rem" }}>
+                {error}
+              </div>
+            )}
             <div style={{ display: "flex", gap: "0.75rem" }}>
               <div style={{ flex: 1 }}>
                 <label
@@ -167,7 +201,14 @@ export default function SignUp() {
                 >
                   First name
                 </label>
-                <input className="input-field" placeholder="John" />
+                <input 
+                  className="input-field" 
+                  name="firstName"
+                  placeholder="John" 
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
               <div style={{ flex: 1 }}>
                 <label
@@ -181,7 +222,14 @@ export default function SignUp() {
                 >
                   Last name
                 </label>
-                <input className="input-field" placeholder="Doe" />
+                <input 
+                  className="input-field" 
+                  name="lastName"
+                  placeholder="Doe" 
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
             </div>
 
@@ -200,7 +248,11 @@ export default function SignUp() {
               <input
                 className="input-field"
                 type="email"
+                name="email"
                 placeholder="john@company.io"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
               />
             </div>
 
@@ -260,14 +312,16 @@ export default function SignUp() {
             <button
               type="submit"
               className="btn-primary"
+              disabled={loading}
               style={{
                 width: "100%",
                 padding: "0.85rem",
                 marginTop: "0.25rem",
                 fontSize: "0.95rem",
+                opacity: loading ? 0.7 : 1,
               }}
             >
-              Create Account →
+              {loading ? "Creating Account..." : "Create Account →"}
             </button>
           </form>
 

@@ -1,10 +1,9 @@
-import { Outlet, Navigate } from "react-router-dom";
-
-// When auth is wired up, replace `isAuthenticated` with real auth state
-const isAuthenticated = false;
+import { ROLES, mockUser } from "../utils/auth";
+import { Navigate, Outlet } from "react-router-dom";
 
 const PublicRoutes = () => {
-  return isAuthenticated ? <Navigate to="/dashboard" replace /> : <Outlet />;
+  const redirectPath = mockUser.role === ROLES.CANDIDATE ? "/candidate/home" : "/dashboard";
+  return mockUser.isAuthenticated ? <Navigate to={redirectPath} replace /> : <Outlet />;
 };
 
 export default PublicRoutes;

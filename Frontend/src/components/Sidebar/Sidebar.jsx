@@ -1,16 +1,39 @@
-import { NavLink, useNavigate } from "react-router-dom";
-
-const navItems = [
-  { label: "Dashboard", to: "/dashboard", icon: "⊞" },
-  { label: "Interview Setup", to: "/interview/setup", icon: "📋" },
-  { label: "AI Room", to: "/interview/ai-room", icon: "🤖" },
-  { label: "Live Room", to: "/interview/live-room", icon: "🎥" },
-  { label: "Reports", to: "/reports", icon: "📊" },
-  { label: "Admin", to: "/admin", icon: "🛡️" },
-];
-
+import { ROLES, mockUser } from "../../utils/auth";
+import { useNavigate, NavLink } from "react-router-dom";
 const Sidebar = () => {
   const navigate = useNavigate();
+
+  const navItems = [
+    { 
+      label: "Dashboard", 
+      to: mockUser.role === ROLES.CANDIDATE ? "/candidate/home" : "/dashboard", 
+      icon: "⊞" 
+    },
+    {
+      label: "Interview Setup",
+      to: "/interview/setup",
+      icon: "📋",
+      roles: [ROLES.CANDIDATE],
+    },
+    {
+      label: "AI Room",
+      to: "/interview/ai-room",
+      icon: "🤖",
+      roles: [ROLES.CANDIDATE],
+    },
+    {
+      label: "Live Room",
+      to: "/interview/live-room",
+      icon: "🎥",
+      roles: [ROLES.INTERVIEWER],
+    },
+    { label: "Reports", to: "/reports", icon: "📊" },
+    { label: "Admin", to: "/admin", icon: "🛡️", roles: [ROLES.ADMIN] },
+  ];
+
+  const filteredNavItems = navItems.filter(
+    (item) => !item.roles || item.roles.includes(mockUser.role),
+  );
 
   return (
     <aside
@@ -69,7 +92,7 @@ const Sidebar = () => {
           gap: "0.25rem",
         }}
       >
-        {navItems.map(({ label, to, icon }) => (
+        {filteredNavItems.map(({ label, to, icon }) => (
           <NavLink
             key={to}
             to={to}

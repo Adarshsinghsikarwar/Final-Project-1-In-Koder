@@ -82,6 +82,8 @@ const statusStyle = {
   Review: "badge-amber",
 };
 
+import { ROLES, mockUser } from "../../utils/auth";
+
 export default function Dashboard() {
   const navigate = useNavigate();
 
@@ -161,20 +163,24 @@ export default function Dashboard() {
 
           {/* Quick actions */}
           <div style={{ display: "flex", gap: "0.875rem", flexWrap: "wrap" }}>
-            <button
-              className="btn-primary"
-              style={{ padding: "0.7rem 1.5rem", fontSize: "0.875rem" }}
-              onClick={() => navigate("/interview/setup")}
-            >
-              + New Interview
-            </button>
-            <button
-              className="btn-cyan"
-              style={{ padding: "0.7rem 1.5rem", fontSize: "0.875rem" }}
-              onClick={() => navigate("/interview/ai-room")}
-            >
-              🤖 AI Room
-            </button>
+            {mockUser.role === ROLES.CANDIDATE && (
+              <>
+                <button
+                  className="btn-primary"
+                  style={{ padding: "0.7rem 1.5rem", fontSize: "0.875rem" }}
+                  onClick={() => navigate("/interview/setup")}
+                >
+                  + New Interview
+                </button>
+                <button
+                  className="btn-cyan"
+                  style={{ padding: "0.7rem 1.5rem", fontSize: "0.875rem" }}
+                  onClick={() => navigate("/interview/ai-room")}
+                >
+                  🤖 AI Room
+                </button>
+              </>
+            )}
             <button
               className="btn-ghost"
               style={{ padding: "0.7rem 1.5rem", fontSize: "0.875rem" }}

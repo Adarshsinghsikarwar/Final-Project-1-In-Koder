@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import { config } from "./config/config.js";
 
 // ─── Route Imports ────────────────────────────────────────────────────────────
 import authRoutes from "./routes/auth.routes.js";
@@ -12,7 +13,7 @@ const app = express();
 // ─── Global Middlewares ───────────────────────────────────────────────────────
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: config.client_url,
     credentials: true,
   }),
 );
@@ -47,7 +48,7 @@ app.use((err, req, res, next) => {
   res.status(statusCode).json({
     message: err.message,
     // Show stack trace only in development
-    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
+    ...(config.node_env === "development" && { stack: err.stack }),
   });
 });
 

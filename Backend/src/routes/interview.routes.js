@@ -1,5 +1,6 @@
 import express from "express";
-import { body } from "express-validator";
+import { createSessionValidation } from "../validators/interview.validator.js";
+import validate from "../middlewares/validate.middleware.js";
 import {
   createSession,
   getAllSessions,
@@ -14,27 +15,10 @@ const router = express.Router();
 // All interview routes require authentication
 router.use(authMiddleware);
 
-// ─── Validation for creating a session ──────────────────────────────────────
-const createSessionValidation = [
-  body("jobRole").trim().notEmpty().withMessage("Job role is required"),
-  body("difficulty")
-    .optional()
-    .isIn(["beginner", "intermediate", "advanced"])
-    .withMessage("Difficulty must be beginner, intermediate, or advanced"),
-  body("techStack")
-    .optional()
-    .isArray()
-    .withMessage("Tech stack must be an array"),
-  body("type")
-    .optional()
-    .isIn(["ai", "live"])
-    .withMessage("Type must be ai or live"),
-];
-
 // ─── Routes ──────────────────────────────────────────────────────────────────
 
 // POST   /api/interviews         → Create a session (InterviewSetup page)
-router.post("/", createSessionValidation, createSession);
+router.post("/", createSessionValidation, validate, createSession);
 
 // GET    /api/interviews         → List all sessions for user (Dashboard)
 router.get("/", getAllSessions);

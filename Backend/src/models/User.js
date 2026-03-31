@@ -43,6 +43,46 @@ const userSchema = new mongoose.Schema(
       default: "", // URL to profile picture
     },
 
+    headline: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    bio: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    experienceLevel: {
+      type: String,
+      enum: ["Junior", "Mid", "Senior", "Lead", "N/A"],
+      default: "N/A",
+    },
+
+    techStack: {
+      type: [String],
+      default: [],
+    },
+
+    availability: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    socialLinks: {
+      linkedin: { type: String, default: "" },
+      github: { type: String, default: "" },
+      portfolio: { type: String, default: "" },
+    },
+
+    isProfileComplete: {
+      type: Boolean,
+      default: false,
+    },
+
     isActive: {
       type: Boolean,
       default: true,

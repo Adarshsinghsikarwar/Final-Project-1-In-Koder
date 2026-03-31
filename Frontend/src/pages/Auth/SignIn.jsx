@@ -1,15 +1,28 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ROLES } from "../../utils/auth";
+import authService from "../../services/authService";
 
 export default function SignIn() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: hook up real auth
-    navigate("/dashboard");
+    setError("");
+    setLoading(true);
+    try {
+      const res = await authService.login({ email, password });
+      const redirectPath = res.user.role === "candidate" ? "/candidate/home" : "/dashboard";
+      navigate(redirectPath);
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid email or password.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -249,6 +262,11 @@ export default function SignIn() {
               gap: "0.875rem",
             }}
           >
+            {error && (
+              <div style={{ color: "#ef4444", fontSize: "0.8rem", textAlign: "center", background: "rgba(239,68,68,0.1)", padding: "0.5rem", borderRadius: "0.5rem" }}>
+                {error}
+              </div>
+            )}
             <div>
               <label
                 style={{
@@ -309,14 +327,16 @@ export default function SignIn() {
             <button
               type="submit"
               className="btn-primary"
+              disabled={loading}
               style={{
                 width: "100%",
                 padding: "0.85rem",
                 marginTop: "0.5rem",
                 fontSize: "0.95rem",
+                opacity: loading ? 0.7 : 1,
               }}
             >
-              Sign In →
+              {loading ? "Signing In..." : "Sign In →"}
             </button>
           </form>
 

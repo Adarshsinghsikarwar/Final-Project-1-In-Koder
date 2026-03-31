@@ -4,12 +4,13 @@ import InterviewSession from "../models/InterviewSession.js";
 import { generateFullReport } from "../services/ai.service.js";
 import { buildReportPayload } from "../services/report.service.js";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// @route   POST /api/reports/generate/:sessionId
-// @desc    Generate an AI report for a completed interview session
-//          Frontend: called automatically when AIInterviewRoom finishes
-// @access  Private
-// ─────────────────────────────────────────────────────────────────────────────
+/**
+ * @route   POST /api/reports/generate/:sessionId
+ * @desc    Generate an AI report for a completed interview session
+ *          Frontend: called automatically when AIInterviewRoom finishes
+ * @access  Private
+ */
+
 export const generateReport = asyncHandler(async (req, res) => {
   const session = await InterviewSession.findById(
     req.params.sessionId,
@@ -50,12 +51,13 @@ export const generateReport = asyncHandler(async (req, res) => {
   });
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// @route   GET /api/reports
-// @desc    Get all reports for the logged-in candidate (paginated)
-//          Frontend: Reports page — show list of past interviews
-// @access  Private
-// ─────────────────────────────────────────────────────────────────────────────
+/**
+ * @route   GET /api/reports
+ * @desc    Get all reports for the logged-in candidate (paginated)
+ *          Frontend: Reports page — show list of past interviews
+ * @access  Private
+ */
+
 export const getMyReports = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
@@ -82,12 +84,12 @@ export const getMyReports = asyncHandler(async (req, res) => {
   });
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// @route   GET /api/reports/:id
-// @desc    Get a single full report by ID
-//          Frontend: Reports detail page — show breakdown, scores, feedback
-// @access  Private
-// ─────────────────────────────────────────────────────────────────────────────
+/**
+ * @route   GET /api/reports/:id
+ * @desc    Get a single full report by ID
+ *          Frontend: Reports detail page — show breakdown, scores, feedback
+ * @access  Private
+ */
 export const getReportById = asyncHandler(async (req, res) => {
   const report = await Report.findById(req.params.id)
     .populate("candidate", "name email avatar")

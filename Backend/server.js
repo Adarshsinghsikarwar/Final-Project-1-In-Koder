@@ -1,11 +1,12 @@
-import "dotenv/config";
 import http from "http";
 import { Server as SocketIOServer } from "socket.io";
-
-import app from "./app.js";
-import connectDB from "./config/db.js";
-import redisClient from "./config/redis.js";
-import { initSocket } from "./sockets/socketHandler.js";
+import app from "./src/app.js";
+import { config } from "./src/config/config.js";
+import connectDB from "./src/config/db.js";
+import redisClient from "./src/config/redis.js";
+import { initSocket } from "./src/sockets/socketHandler.js";
+import dns from "dns";
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 // ─── Create HTTP Server ───────────────────────────────────────────────────────
 // We wrap the Express app in a Node http.Server so Socket.io can attach to it.
@@ -14,7 +15,7 @@ const server = http.createServer(app);
 // ─── Attach Socket.io ─────────────────────────────────────────────────────────
 const io = new SocketIOServer(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: config.client_url,
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -24,7 +25,7 @@ const io = new SocketIOServer(server, {
 initSocket(io);
 
 // ─── Start Server ─────────────────────────────────────────────────────────────
-const PORT = process.env.PORT || 5000;
+const PORT = config.port;
 
 const startServer = async () => {
   try {
@@ -41,7 +42,7 @@ const startServer = async () => {
       console.log(`\n🚀 Server running on port ${PORT}`);
       console.log(`📡 Socket.io ready`);
       console.log(
-        `🌐 CORS enabled for: ${process.env.CLIENT_URL || "http://localhost:5173"}`,
+        `🌐 CORS enabled for: ${config.client_url}`,
       );
       console.log(`\n📋 API Routes:`);
       console.log(`   POST   /api/auth/register`);

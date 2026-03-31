@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
+import { config } from "../config/config.js";
+import redisClient from "../config/redis.js";
 
 /**
  * authMiddleware
@@ -23,9 +25,18 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
 
   const token = authHeader.split(" ")[1];
 
+  // 2. Optional: check if token is blacklisted (Logout feature)
+  if (redisClient.status === "ready") {
+    const isBlacklisted = await redisClient.get(`blacklist:${token}`);
+    if (isBlacklisted) {
+      res.status(401);
+      throw new Error("Not authorized — token has been logged out");
+    }
+  }
+
   try {
-    // 2. Verify the token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // 3. Verify the token
+    const decoded = jwt.verify(token, config.jwt_secret);
 
     // 3. Fetch user from DB (exclude password)
     const user = await User.findById(decoded.id).select("-password");

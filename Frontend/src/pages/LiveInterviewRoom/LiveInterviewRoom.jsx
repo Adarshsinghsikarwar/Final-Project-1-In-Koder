@@ -6,11 +6,15 @@ import CodeEditor from "../../components/CodeEditor/CodeEditor";
 import ChatPanel from "../../components/Chat/ChatPanel";
 import ScoreCard from "../../components/ScoreCard/ScoreCard";
 import Timer from "../../components/Timer/Timer";
+import { mockUser, ROLES } from "../../utils/auth";
 
 export default function LiveInterviewRoom() {
   const [muted, setMuted] = useState(false);
   const [cameraOff, setCameraOff] = useState(false);
   const [notes, setNotes] = useState("");
+  const [interviewStarted, setInterviewStarted] = useState(false);
+
+  const isInterviewer = mockUser.role === ROLES.INTERVIEWER;
 
   return (
     <div
@@ -89,6 +93,22 @@ export default function LiveInterviewRoom() {
               >
                 ✕ End Call
               </button>
+
+              {isInterviewer && !interviewStarted && (
+                <button
+                  onClick={() => setInterviewStarted(true)}
+                  className="btn-primary"
+                  style={{
+                    padding: "0.6rem 1.5rem",
+                    fontSize: "0.85rem",
+                    background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                    border: "none",
+                    boxShadow: "0 4px 12px rgba(16, 185, 129, 0.2)",
+                  }}
+                >
+                  🚀 Start Interview
+                </button>
+              )}
             </div>
 
             {/* Code editor */}

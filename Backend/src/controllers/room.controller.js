@@ -2,12 +2,12 @@ import asyncHandler from "express-async-handler";
 import Room from "../models/Room.js";
 import InterviewSession from "../models/InterviewSession.js";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// @route   POST /api/rooms
-// @desc    Create a new live interview room
-//          Frontend: LiveInterviewRoom — interviewer creates a room before sharing
-// @access  Private (interviewer, admin)
-// ─────────────────────────────────────────────────────────────────────────────
+/**
+ * @route   POST /api/rooms
+ * @desc    Create a new live interview room
+ *          Frontend: LiveInterviewRoom — interviewer creates a room before sharing
+ * @access  Private (interviewer, admin)
+ */
 export const createRoom = asyncHandler(async (req, res) => {
   const { sessionId, config } = req.body;
 
@@ -47,12 +47,12 @@ export const createRoom = asyncHandler(async (req, res) => {
   });
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// @route   GET /api/rooms/:code
-// @desc    Get room details by room code — validates before joining
-//          Frontend: LiveInterviewRoom — candidate enters room code to join
-// @access  Private
-// ─────────────────────────────────────────────────────────────────────────────
+/**
+ * @route   GET /api/rooms/:code
+ * @desc    Get room details by room code — validates before joining
+ *          Frontend: LiveInterviewRoom — candidate enters room code to join
+ * @access  Private
+ */
 export const getRoomByCode = asyncHandler(async (req, res) => {
   const room = await Room.findOne({
     roomCode: req.params.code.toUpperCase(),
@@ -79,12 +79,12 @@ export const getRoomByCode = asyncHandler(async (req, res) => {
   res.status(200).json({ room });
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// @route   DELETE /api/rooms/:code/leave
-// @desc    Remove the current user from a room's participants list
-//          Frontend: LiveInterviewRoom — called on page unmount / leave button
-// @access  Private
-// ─────────────────────────────────────────────────────────────────────────────
+/**
+ * @route   DELETE /api/rooms/:code/leave
+ * @desc    Remove the current user from a room's participants list
+ *          Frontend: LiveInterviewRoom — called on page unmount / leave button
+ * @access  Private
+ */
 export const leaveRoom = asyncHandler(async (req, res) => {
   const room = await Room.findOne({
     roomCode: req.params.code.toUpperCase(),

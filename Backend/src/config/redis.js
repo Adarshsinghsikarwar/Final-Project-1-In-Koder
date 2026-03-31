@@ -1,4 +1,5 @@
 import Redis from "ioredis";
+import { config } from "./config.js";
 
 /**
  * redisClient
@@ -10,7 +11,7 @@ import Redis from "ioredis";
  * If Redis is not running locally the server still starts — cache is optional.
  */
 const redisClient = new Redis(
-  process.env.REDIS_URL || "redis://localhost:6379",
+  config.redis_url,
   {
     lazyConnect: true,
     maxRetriesPerRequest: 1,

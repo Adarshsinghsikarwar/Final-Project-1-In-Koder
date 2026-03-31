@@ -33,10 +33,17 @@ const TECH_STACK = [
   "Docker",
 ];
 
+const INTERVIEWERS = [
+  { id: 1, name: "Dr. Sarah Mitchell", role: "Senior Backend Eng @ Google", avatar: "👩‍💻", available: "10:00 AM - 2:00 PM" },
+  { id: 2, name: "Marcus Chen", role: "Frontend Lead @ Meta", avatar: "👨‍💻", available: "3:00 PM - 6:00 PM" },
+  { id: 3, name: "Jessica Wu", role: "Product Designer @ Airbnb", avatar: "👩‍🎨", available: "9:00 AM - 12:00 PM" },
+];
+
 export default function InterviewSetup() {
   const navigate = useNavigate();
   const [type, setType] = useState("ai");
   const [chips, setChips] = useState([]);
+  const [selectedInterviewer, setSelectedInterviewer] = useState(null);
   const [candidate, setCandidate] = useState({
     name: "",
     email: "",
@@ -229,7 +236,7 @@ export default function InterviewSetup() {
             {/* Step 3: Tech stack */}
             <div
               className="card"
-              style={{ padding: "1.5rem", marginBottom: "2rem" }}
+              style={{ padding: "1.5rem", marginBottom: "1.25rem" }}
             >
               <div style={{ fontWeight: 700, marginBottom: "1rem" }}>
                 3. Tech Stack / Topics
@@ -261,13 +268,62 @@ export default function InterviewSetup() {
               </div>
             </div>
 
+            {/* Step 4: Interviewer (Only for Live) */}
+            {type === "live" && (
+              <div
+                className="card animate-fade-up"
+                style={{ padding: "1.5rem", marginBottom: "2rem" }}
+              >
+                <div style={{ fontWeight: 700, marginBottom: "1rem" }}>
+                  4. Select Interviewer
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                  {INTERVIEWERS.map((int) => (
+                    <div
+                      key={int.id}
+                      onClick={() => setSelectedInterviewer(int.id)}
+                      style={{
+                        padding: "1rem",
+                        borderRadius: "0.75rem",
+                        border: `1px solid ${selectedInterviewer === int.id ? "#7c3aed" : "rgba(255,255,255,0.08)"}`,
+                        background: selectedInterviewer === int.id ? "rgba(124,58,237,0.12)" : "rgba(255,255,255,0.02)",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "1rem",
+                        cursor: "pointer",
+                        transition: "all 0.15s"
+                      }}
+                    >
+                      <div style={{ fontSize: "1.5rem", width: 40, height: 40, background: "rgba(255,255,255,0.05)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        {int.avatar}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>{int.name}</div>
+                        <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)" }}>{int.role}</div>
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <div style={{ fontSize: "0.7rem", color: "#10b981", fontWeight: 600 }}>Available Today</div>
+                        <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)" }}>{int.available}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Launch */}
             <button
               className="btn-primary"
-              style={{ padding: "0.9rem 2.5rem", fontSize: "1rem" }}
+              style={{ 
+                padding: "0.9rem 2.5rem", 
+                fontSize: "1rem",
+                opacity: (type === 'live' && !selectedInterviewer) ? 0.5 : 1,
+                cursor: (type === 'live' && !selectedInterviewer) ? "not-allowed" : "pointer"
+              }}
+              disabled={type === 'live' && !selectedInterviewer}
               onClick={() => navigate(selectedType.route)}
             >
-              Launch {selectedType.label} →
+              {type === "ai" ? "Launch AI Session →" : "Schedule Interview →"}
             </button>
           </div>
         </main>
